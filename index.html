@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Motta Chithma 💕</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes:wght@400&family=Dancing+Script:wght@400;600&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000000;
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+        }
+
+        .heart-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            opacity: 0.8;
+            pointer-events: none;
+            animation: heartFall linear infinite;
+        }
+
+        @keyframes heartFall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(calc(100vh + 100px)) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .main-content {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .hi-text {
+            font-size: 6rem;
+            font-weight: 700;
+            color: white;
+            opacity: 0;
+            font-family: 'Poppins', sans-serif;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .name-text {
+            font-family: 'Great Vibes', cursive;
+            font-size: 4rem;
+            color: #ffb6c1;
+            opacity: 0;
+            text-align: center;
+            text-shadow: 0 0 30px rgba(255, 182, 193, 0.8);
+        }
+
+        .call-message {
+            position: fixed;
+            top: 65%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.8rem;
+            color: #ff69b4;
+            opacity: 0;
+            text-align: center;
+            font-weight: 600;
+            text-shadow: 0 0 20px rgba(255, 105, 180, 0.6);
+            z-index: 15;
+        }
+
+        .bye-message {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            color: #ff69b4;
+            opacity: 0;
+            text-align: center;
+            text-shadow: 0 0 25px rgba(255, 105, 180, 0.8);
+            font-weight: 600;
+        }
+
+        .fade-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000000;
+            opacity: 0;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .show {
+            opacity: 1 !important;
+        }
+
+        .hide {
+            opacity: 0 !important;
+        }
+
+        .fade-in {
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        .fade-out {
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        @media (max-width: 768px) {
+            .hi-text { font-size: 4rem; }
+            .name-text { font-size: 2.5rem; }
+            .call-message { font-size: 1.4rem; }
+            .bye-message { font-size: 2rem; }
+        }
+
+        @media (max-width: 480px) {
+            .hi-text { font-size: 3rem; }
+            .name-text { font-size: 2rem; }
+            .call-message { font-size: 1.2rem; }
+            .bye-message { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <audio id="bgMusic" loop>
+        <!-- Beautiful romantic instrumental - Perfect Love Song -->
+        <source src="https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf07a.mp3" type="audio/mpeg">
+        <!-- Backup romantic music -->
+        <source src="https://cdn.pixabay.com/audio/2022/03/24/audio_4621777a61.mp3" type="audio/mpeg">
+        <!-- Another backup -->
+        <source src="https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="heart-container" id="heartContainer"></div>
+
+    <div class="main-content">
+        <div class="hi-text fade-in" id="hiText">HI</div>
+        <div class="name-text fade-in" id="nameText">Motta Chithma</div>
+        <div class="bye-message fade-in" id="byeText">Bye Sweetheart 💗</div>
+    </div>
+
+    <div class="call-message fade-in" id="callMessage">Can I have a call? 📞</div>
+    <div class="fade-overlay" id="fadeOverlay"></div>
+
+    <script>
+        let animationStep = 0;
+        let heartInterval;
+        let bgMusic = document.getElementById('bgMusic');
+
+        const hearts = ['💕', '💖', '💗', '💘', '💝', '💞', '💟', '❤', '🧡', '💛', '💚', '💙', '💜', '🤍'];
+        const colors = ['#ff69b4', '#ff1493', '#ffb6c1', '#ffc0cb', '#ff6347', '#ff4500'];
+
+        function startAnimation() {
+            // Try to play beautiful romantic music
+            bgMusic.volume = 0.4; // Slightly higher volume for better experience
+            bgMusic.play().catch(() => {
+                // Add visual indicator for user to click if autoplay fails
+                document.body.style.cursor = 'pointer';
+                const clickText = document.createElement('div');
+                clickText.innerHTML = '🎵 Click anywhere to start music 🎵';
+                clickText.style.position = 'fixed';
+                clickText.style.top = '10px';
+                clickText.style.left = '50%';
+                clickText.style.transform = 'translateX(-50%)';
+                clickText.style.color = '#ff69b4';
+                clickText.style.fontSize = '16px';
+                clickText.style.zIndex = '200';
+                clickText.style.textAlign = 'center';
+                clickText.style.fontFamily = 'Poppins, sans-serif';
+                document.body.appendChild(clickText);
+                
+                document.addEventListener('click', () => {
+                    bgMusic.play();
+                    document.body.removeChild(clickText);
+                    document.body.style.cursor = 'default';
+                }, { once: true });
+            });
+
+            // Start heart rain
+            startHeartRain();
+
+            // Animation sequence - perfectly timed
+            setTimeout(() => showHi(), 500);
+            setTimeout(() => hideHi(), 2000);
+            setTimeout(() => showName(), 2500);
+            setTimeout(() => showCallMessage(), 6000);
+            setTimeout(() => hideCallMessage(), 8500);
+            setTimeout(() => hideName(), 9000);
+            setTimeout(() => showBye(), 9500);
+            setTimeout(() => hideBye(), 12000);
+            setTimeout(() => finalFade(), 12500);
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.innerHTML = hearts[Math.floor(Math.random() * hearts.length)];
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.color = colors[Math.floor(Math.random() * colors.length)];
+            heart.style.fontSize = (Math.random() * 15 + 15) + 'px';
+            heart.style.animationDuration = (Math.random() * 3 + 5) + 's';
+            heart.style.animationDelay = Math.random() * 2 + 's';
+
+            document.getElementById('heartContainer').appendChild(heart);
+
+            setTimeout(() => {
+                if (heart.parentNode) {
+                    heart.parentNode.removeChild(heart);
+                }
+            }, 8000);
+        }
+
+        function startHeartRain() {
+            heartInterval = setInterval(createHeart, 300);
+        }
+
+        function stopHeartRain() {
+            if (heartInterval) {
+                clearInterval(heartInterval);
+            }
+        }
+
+        function showHi() {
+            document.getElementById('hiText').classList.add('show');
+        }
+
+        function hideHi() {
+            document.getElementById('hiText').classList.remove('show');
+            document.getElementById('hiText').classList.add('hide');
+        }
+
+        function showName() {
+            document.getElementById('nameText').classList.add('show');
+        }
+
+        function hideName() {
+            document.getElementById('nameText').classList.remove('show');
+            document.getElementById('nameText').classList.add('hide');
+        }
+
+        function showCallMessage() {
+            document.getElementById('callMessage').classList.add('show');
+        }
+
+        function hideCallMessage() {
+            document.getElementById('callMessage').classList.remove('show');
+            document.getElementById('callMessage').classList.add('hide');
+        }
+
+        function showBye() {
+            document.getElementById('byeText').classList.add('show');
+        }
+
+        function hideBye() {
+            document.getElementById('byeText').classList.remove('show');
+            document.getElementById('byeText').classList.add('hide');
+        }
+
+        function finalFade() {
+            stopHeartRain();
+            
+            // Fade out music gracefully
+            let volume = 0.4;
+            const fadeMusic = setInterval(() => {
+                volume -= 0.02;
+                if (volume <= 0) {
+                    bgMusic.pause();
+                    clearInterval(fadeMusic);
+                } else {
+                    bgMusic.volume = volume;
+                }
+            }, 100);
+
+            // Fade to black
+            const overlay = document.getElementById('fadeOverlay');
+            overlay.style.transition = 'opacity 2s ease-in-out';
+            overlay.style.opacity = '1';
+        }
+
+        // Auto start when page loads
+        window.addEventListener('load', () => {
+            setTimeout(startAnimation, 500);
+        });
+
+        // Click to start music if autoplay fails
+        document.addEventListener('click', () => {
+            if (bgMusic.paused) {
+                bgMusic.play();
+            }
+        });
+    </script>
+</body>
+</html>
